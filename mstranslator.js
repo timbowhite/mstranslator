@@ -104,19 +104,21 @@ MsTranslator.prototype.call = function(path, params, fn) {
       body += chunk;
     });
     res.on('end', function () {
+      var err = null;
+
       //remove invalid BOM
       body = body.substring(1, body.length);
-      try {
-        if (body.indexOf('ArgumentException:') === 1 ||
-          body.indexOf('ArgumentOutOfRangeException:') === 1) {
-
-          fn(new Error(body), JSON.parse(body));
-        } else {
-          fn(null, JSON.parse(body));
-        }
-      } catch (e) {
-        fn(e, null);
+      if (body.indexOf('ArgumentException:') === 1 ||
+        body.indexOf('ArgumentOutOfRangeException:') === 1) {
+        err = new Error(body);
       }
+
+      try{
+        body = JSON.parse(body);
+      }
+      catch(e){}
+
+      fn(err, body);
     });
   });
   req.end();
