@@ -108,8 +108,7 @@ MsTranslator.prototype.call = function(path, params, fn) {
 
       //remove invalid BOM
       body = body.substring(1, body.length);
-      if (body.indexOf('ArgumentException:') === 1 ||
-        body.indexOf('ArgumentOutOfRangeException:') === 1) {
+      if (/^"[A-Za-z]*?Exception:/.test(body)){ 
         err = new Error(body);
       }
 
